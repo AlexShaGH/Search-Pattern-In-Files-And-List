@@ -56,8 +56,6 @@ def process_directory(src, np_log, p_log, app_log):
     for path, dirs, files in os.walk(src): 
         for file in files:
             process_file(os.path.join(path, file), np_log, p_log, app_log, pattern)
-        for directory in dirs:
-            process_directory(os.path.join(path, directory), np_log, p_log, app_log)
     return
 
 
@@ -88,6 +86,7 @@ def process_file(file, not_found_log, found_log, app_log, pattern_signature):
     global bytes_processed
     global files_processed
     global files_found
+    global files_unable_to_process    
     try:
         file_size = os.stat(file).st_size
         if file_size > 0:
@@ -103,10 +102,10 @@ def process_file(file, not_found_log, found_log, app_log, pattern_signature):
            not_found_log.write(file+","+str(file_size)+'\n')
         bytes_processed += file_size
         files_processed += 1
-        #output_stream.write("processed {0:,} files in {1:,} bytes, found pattern in {2:,} files \r".format(files_processed,bytes_processed,files_found))           
-        output_stream.write("processed {0:,} files, found pattern in {1:,} files \r".format(files_processed,files_found))           
+        output_stream.write("processed {0:,} files in {1:,} bytes, found pattern in {2:,} files \r".format(files_processed,bytes_processed,files_found))                   
     except Exception as e:
         msg = "Unable to process file: {0}, exception: {1}".format(file,e)
+        files_unable_to_process += 1        
         log_msg(msg, app_log)
         
     return
@@ -115,6 +114,7 @@ output_stream = sys.stdout
 bytes_processed = 0
 files_processed = 0
 files_found = 0
+files_unable_to_process = 0
 pattern = bytes('Data Recovery Labs','ascii')# default search pattern
 
 def main():
@@ -152,10 +152,10 @@ def main():
             # Loop through the directories recursively and check files
             process_directory(src_path, files_np_log, files_p_log, app_log_file)
             # update logs with totals
-            files_np_log.write('Total: {:,}'.format(files_processed-files_found)+'\n')
-            files_p_log.write('Total: {:,}'.format(files_found)+'\n')
-            log_msg("Processed {0:,} bytes in {1:,} files, found {2:,} files with pattern".format(
-                bytes_processed,files_processed,files_found), app_log_file)     
+            files_np_log.write('Total: {:,} files\n'.format(files_processed-files_found))
+            files_p_log.write('Total: {:,} files\n'.format(files_found))
+            log_msg("Processed {0:,} bytes in {1:,} files, found {2:,} files with pattern, unable to process {3:,} files".format(
+                bytes_processed,files_processed,files_found,files_unable_to_process), app_log_file)             
 
             log_msg("Done", app_log_file)     
     
