@@ -1,8 +1,15 @@
 # -*- coding: utf-8 -*-
 """
-Created on Wed Apr 13 13:57:49 2022
 
-@author: ALEX SHASHKOV
+Python script to iterate a directory recursively, 
+scan files for bytes pattern and list those containing the pattern
+
+Copyright (c) 2022, Oleksandr Shashkov
+All rights reserved.
+
+This source code is licensed under the MIT license found in the
+LICENSE file in the root directory of this source tree.
+
 """
 import sys
 import os.path 
