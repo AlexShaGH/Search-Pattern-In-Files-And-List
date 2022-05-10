@@ -11,14 +11,14 @@ from datetime import datetime
 
 def log_msg(msg, log, echo=True):
     """
-    Logs and prints message 
+    Logs and prints(optionaly) message
 
     Parameters
     ----------
-    msg : str
-        message to log and print
+    msg : string
+        message to log and print.
     log : file object
-        app log file
+        app log file.
     echo : BOOL, optional
         to print or not. The default is True.
 
@@ -40,13 +40,13 @@ def process_directory(src, np_log, p_log, app_log):
     Parameters
     ----------
     src : string
-         represents path - i.e. E:\director
+         represents path - i.e. E:\directory.
     np_log : file object
-        log file to save names of the files with no found pattern
+        log file to save names of the files with no found pattern.
     p_log : file object
-        log file to save names of the files with found pattern
+        log file to save names of the files with found pattern.
     app_log : file object
-        application log file to save events
+        application log file to register events.
 
     Returns
     -------
@@ -58,24 +58,23 @@ def process_directory(src, np_log, p_log, app_log):
             process_file(os.path.join(path, file), np_log, p_log, app_log, pattern)
     return
 
-
-def process_file(file, not_found_log, found_log, app_log, pattern_signature):
+def process_file(file, np_log, p_log, app_log, pattern_sig):
     """
-    Opens memory maping of the file and searches in it for pattern
-    updates logs and counter accordingly
+    Opens memory maping of the file and searches in it for pattern, 
+    updates logs and counters accordingly
 
     Parameters
     ----------
     file : string
-        full name of the file
-    not_found_log : file object
-        log file to save names of the files with no found pattern
-    found_log : file object
-        log file to save names of the files with found pattern
+        full name of the file.
+    np_log : file object
+        log file to save names of the files with no found pattern.
+    p_log : file object
+        log file to save names of the files with found pattern.
     app_log : file object
-        application log file to save events
-    pattern_signature : binary string
-        pattern to search in the file
+        application log file to register events.
+    pattern_sig : binary string
+        pattern to search in the file.
 
     Returns
     -------
@@ -92,14 +91,14 @@ def process_file(file, not_found_log, found_log, app_log, pattern_signature):
         if file_size > 0:
             with open(file, mode='rb+') as f:
                 mm = mmap.mmap(f.fileno(), 0)
-                if mm.find(pattern_signature) != -1:
+                if mm.find(pattern_sig) != -1:
                     found = True
                 mm.close()
         if found:
-           found_log.write(file+","+str(file_size)+'\n')
+           p_log.write(file+","+str(file_size)+'\n')
            files_found += 1
         else:
-           not_found_log.write(file+","+str(file_size)+'\n')
+           np_log.write(file+","+str(file_size)+'\n')
         bytes_processed += file_size
         files_processed += 1
         output_stream.write("processed {0:,} files in {1:,} bytes, found pattern in {2:,} files \r".format(files_processed,bytes_processed,files_found))                   
@@ -115,7 +114,7 @@ bytes_processed = 0
 files_processed = 0
 files_found = 0
 files_unable_to_process = 0
-pattern = bytes('Data Recovery Labs','ascii')# default search pattern
+pattern = bytes('String to find in file','ascii')# default search pattern
 
 def main():
     # check and parse arguments
