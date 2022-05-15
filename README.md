@@ -1,4 +1,4 @@
-# SerchInFilesAndList
+# Search-Pattern-In-Files-And-List
 Python script to iterate a directory recursively, scan files for bytes pattern and list those containing the pattern
 
 Usage: ListFile.py <src_path> <dst_path> <srch_pattern(optional)>
